@@ -9,3 +9,11 @@ output "cluster_endpoint" {
 output "cluster_arn" {
   value = module.eks.cluster_arn
 }
+
+output "vpc_id" {
+    value = module.vpc.vpc_id
+}
+
+output "private_subnets" {
+    value = module.vpc.private_subnets
+}

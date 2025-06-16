@@ -15,13 +15,6 @@ variable "cluster_name" {
   type          = string
 }
 
-variable "vpc_id" {
-    description = "VPC ID to use for eks"
-    type        = string
-  
-}
 
-variable "subnet_ids" {
-  description = "Subnet IDS for the eks cluster"
-  type        = list(string)
-}
+
+

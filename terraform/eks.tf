@@ -4,8 +4,9 @@ module "eks" {
 
     cluster_name    = var.cluster_name
     cluster_version = "1.31"
-    subnet_ids      = var.subnet_ids
-    vpc_id          = var.vpc_id
+
+    subnet_ids      = module.vpc.private_subnets
+    vpc_id          = module.vpc.vpc_id
 
 
 manage_aws_auth_configmap = true
@@ -16,7 +17,7 @@ eks_managed_node_groups = {
     max_size     = 3
     min_size     = 1
 
-    instace_types = ["t3.medium"]
+    instance_types = ["t3.medium"]
     }
   }
   tags = {
