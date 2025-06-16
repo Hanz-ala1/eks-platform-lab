@@ -14,12 +14,12 @@ eks_managed_node_groups = {
   default_node_group = {
     desired_size = 2
     max_size     = 3
-    mix_size     = 1
+    min_size     = 1
 
     instace_types = ["t3.medium"]
     }
   }
-  tags {
+  tags = {
     Environment = "dev"
     Terraform   = "true"
   }
