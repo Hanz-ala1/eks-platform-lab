@@ -1,0 +1,25 @@
+# Terraform state files (sensitive info)
+*.tfstate
+*.tfstate.backup
+
+# Crash log files
+crash.log
+
+# Terraform directories
+.terraform/
+
+# Override files (optional)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+terraform.rc
+
+
+# Ignore IDE/editor folders (optional, add your editor if needed)
+.vscode/
+.idea/
+*.swp
