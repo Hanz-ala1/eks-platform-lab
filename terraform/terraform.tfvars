@@ -1,1 +1,1 @@
-cluster_name = "eks-lab-cluster"
+cluster_name = "name of cluster"
