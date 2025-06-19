@@ -8,6 +8,9 @@ crash.log
 # Terraform directories
 .terraform/
 
+# Terraform tfvars
+terraform.tfvars
+
 # Override files (optional)
 override.tf
 override.tf.json
@@ -23,3 +26,6 @@ terraform.rc
 .vscode/
 .idea/
 *.swp
+
+
+
