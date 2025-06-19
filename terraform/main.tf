@@ -1,4 +1,9 @@
 terraform {
+  backend "s3" {
+    bucket = "terraform-state-bucket-lab-deployment"
+    key    = "envs/dev/terraform.tfstate"
+    region = "eu-west-2"
+  }
     required_providers {
       aws = {
         source = "hashicorp/aws"
@@ -13,4 +18,5 @@ provider "aws" {
   region  = var.aws_region
   profile = var.aws_profile
 }
+
 
