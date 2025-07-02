@@ -1,6 +1,6 @@
 # 🚀 eks-platform-lab
 
-**Platform Engineering Lab – EKS Deployment with Terraform**
+**EKS Terraform Foundation: Rapid AWS Kubernetes Clusters**
 
 This repository provisions a ready AWS EKS (Elastic Kubernetes Service) cluster using **Terraform**. It lays the groundwork for deploying cloud-native applications through GitOps tools such as **Argo CD** or **Flux**.
 
@@ -23,22 +23,29 @@ This project demonstrates **Infrastructure as Code (IaC)** to build a scalable a
    ┌─────────────────────────────┐
    │         AWS Region          │
    │ ┌─────────────────────────┐ │
-   │ │        VPC (CIDR)       │ │
+   │ │        VPC (10.0.0.0/16)│ │
    │ │ ┌──────────┐ ┌────────┐ │ │
-   │ │ │ Public   │ │ Private│ │ │ Subnets across 3 AZs
-   │ │ │ Subnets  │ │Subnets │ │ │
+   │ │ │ Public   │ │ Private│ │ │ 
+   │ │ │ Subnets  │ │Subnets │ │ │ 
+   │ │ │ • NAT GW │ │ • EKS  │ │ │ 
+   │ │ │ • LB     │ │  Nodes │ │ │ 
    │ │ └──────────┘ └────────┘ │ │
    │ │     ┌────────────────┐  │ │
    │ │     │   EKS Cluster  │  │ │
-   │ │     │ Control Plane  │  │ │
+   │ │     │ • API Server   │  │ │
+   │ │     │ • Managed CP   │  │ │   # CP = Control Plane
    │ │     └────────────────┘  │ │
    │ │     ┌────────────────┐  │ │
    │ │     │ Managed Node   │  │ │
-   │ │     │   Group (EC2)  │  │ │
+   │ │     │ Groups (EC2)   │  │ │
+   │ │     │ • t3.small     │  │ │
+   │ │     │ • Multi-AZ     │  │ │
    │ │     └────────────────┘  │ │
    │ └─────────────────────────┘ │
-   └─────────────────────────────┘
-📦 Core Components
+   └─────────────────────────────┘ ```
+
+---
+## 📦 Core Components
 VPC: Custom /16 CIDR, public and private subnets across 3 AZs.
 
 EKS Cluster: Provisioned using terraform-aws-modules/eks/aws.
@@ -61,16 +68,18 @@ Offically supported with the Eks Cluster	v1.30, v1.31, v1.32
 
 
 💰 Estimated Costs
-Resource	Count	Cost (USD/hr)	Total
-EKS Control Plane	1	$0.10	$0.10
-EC2 t3.small Instances	2	$0.0208	$0.0416
-EBS (2x 8GB)	2	~$0.001	$0.002
-S3 (State Backend)	-	Free Tier	$0.00
-Estimated Total/hr			~$0.1436
+Resource	Count	Cost          (USD/hr)	Total
+EKS Control Plane	1	         $0.10	   $0.10
+EC2 t3.small Instances	2	   $0.0208	$0.0416
+EBS (2x 8GB)	2	            $0.001	$0.002
+S3 (State Backend) -	Free Tier	      $0.00
+Estimated Total/hr			            $0.1436
 
 ⚠️ You are responsible for all AWS charges incurred by this infrastructure.
 
-⚙️ Configuration & Deployment
+--
+
+## ⚙️ Configuration & Deployment
 1️⃣ Clone the Repository
 
 git clone https://github.com/your-org/eks-platform-lab.git
@@ -145,7 +154,15 @@ private_subnets
 🚀 Next Steps: GitOps Ready
 Once the cluster is live, deploy Argo CD or Flux to enable GitOps workflows.
 
-You can point them to a separate Git repository containing Kubernetes manifests for your applications.
+My GitOps Repo
++ [My GitOps Repo](https://github.com/Hanz-ala1/gitops)
+
+### 🛡️ Production Readiness
+This template is **optimized for speed and simplicity**, but enterprises should:  
+- Replace admin IAM roles with **IRSA** ([guide](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html))  
+- Enforce **Pod Security Admission** ([example](https://kubernetes.io/docs/concepts/security/pod-security-standards/))  
+- Add **KMS encryption** for Terraform state (`kms_key_id` in S3 backend)  
+
 
 🧨 Tear Down (Cleanup)
 To destroy all resources and avoid ongoing charges:
@@ -163,6 +180,8 @@ https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
 
 AWS EKS Documentation
 https://docs.aws.amazon.com/eks/
+
+
 
 🛡️ Disclaimer
 This project is for educational and experimental purposes. You are solely responsible for any AWS usage charges incurred.
