@@ -26,6 +26,7 @@ terraform.rc
 .vscode/
 .idea/
 *.swp
+ .DS_Store
 
 
 
