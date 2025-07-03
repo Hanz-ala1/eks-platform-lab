@@ -88,7 +88,7 @@ Offically supported with the Eks Cluster	v1.30, v1.31, v1.32
 ## ⚙️ Configuration & Deployment
 1️⃣ Clone the Repository
 
-git clone https://github.com/your-org/eks-platform-lab.git
+git clone https://github.com/Hanz-ala1/eks-platform-lab.git
 
 cd eks-platform-lab
 
