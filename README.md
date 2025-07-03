@@ -1,112 +1,197 @@
-# eks-platform-lab
-Platform Engineering Lab – EKS, GitOps, Monitoring
+# 🚀 eks-platform-lab
 
-Terraform AWS EKS Cluster for GitOps
-This repository contains the Terraform code to provision a foundational AWS Elastic Kubernetes Service (EKS) cluster. It is designed as the underlying infrastructure layer, ready for application deployments managed by a GitOps controller like Argo CD or Flux.
+**EKS Terraform Foundation: Rapid AWS Kubernetes Clusters**
 
-This project serves as a practical example of Infrastructure as Code (IaC) for building a scalable and robust Kubernetes platform on AWS, suitable for a senior-level Platform/DevOps engineering portfolio.
+This repository provisions a ready AWS EKS (Elastic Kubernetes Service) cluster using **Terraform**. It lays the groundwork for deploying cloud-native applications through GitOps tools such as **Argo CD** or **Flux**.
 
-System Architecture
-The following diagram illustrates the architecture of the AWS resources provisioned by this Terraform code. It includes a multi-AZ VPC, public and private subnets, and an EKS cluster with a managed node group. The Terraform state is securely stored in an S3 bucket.
+---
 
-Core Components
-VPC: A custom Virtual Private Cloud (VPC) is created with a /16 CIDR block, providing a logically isolated section of the AWS Cloud. It is configured with both public and private subnets across three Availability Zones for high availability.
+## 🧭 Overview
 
-EKS Cluster: A managed Kubernetes control plane is provisioned using the official terraform-aws-modules/eks/aws module.
+This project demonstrates **Infrastructure as Code (IaC)** to build a scalable and robust Kubernetes platform on AWS using:
 
-Managed Node Group: A group of EC2 instances (t3.small by default) that are registered as worker nodes for the EKS cluster. This group is configured to autoscale based on demand.
+- AWS EKS for Kubernetes orchestration
+- Terraform for infrastructure automation
+- Remote S3 state backend (with locking support)
+- GitOps-ready foundation
 
-Terraform S3 Backend: The Terraform state is stored remotely in an AWS S3 bucket, which is crucial for team collaboration and state locking.
+---
 
-Prerequisites
-Before you begin, ensure you have the following installed and configured:
+## 🏗️ Architecture
 
-Terraform (version >= 1.3.0)
+<pre>
+   ┌─────────────────────────────┐
+   │         AWS Region          │
+   │ ┌─────────────────────────┐ │
+   │ │        VPC (10.0.0.0/16)│ │
+   │ │ ┌──────────┐ ┌────────┐ │ │
+   │ │ │ Public   │ │ Private│ │ │ 
+   │ │ │ Subnets  │ │Subnets │ │ │ 
+   │ │ │ • NAT GW │ │ • EKS  │ │ │ 
+   │ │ │ • LB     │ │  Nodes │ │ │ 
+   │ │ └──────────┘ └────────┘ │ │
+   │ │     ┌────────────────┐  │ │
+   │ │     │   EKS Cluster  │  │ │
+   │ │     │ • API Server   │  │ │
+   │ │     │ • Managed CP   │  │ │   # CP = Control Plane
+   │ │     └────────────────┘  │ │
+   │ │     ┌────────────────┐  │ │
+   │ │     │ Managed Node   │  │ │
+   │ │     │ Groups (EC2)   │  │ │
+   │ │     │ • t3.small     │  │ │
+   │ │     │ • Multi-AZ     │  │ │
+   │ │     └────────────────┘  │ │
+   │ └─────────────────────────┘ │
+   └─────────────────────────────┘ 
 
-AWS CLI
+</pre>
 
-Configured AWS Credentials with permissions to create the resources defined in this project. You can configure this by running aws configure.
+---
 
-Configuration & Deployment
-Follow these steps to deploy the EKS cluster.
 
-1. Clone the Repository
-git clone <your-repository-url>
-cd <repository-directory>
+## 📦 Core Components
+VPC: Custom /16 CIDR, public and private subnets across 3 AZs.
 
-2. Configure the S3 Backend
-The main.tf file is configured to use an S3 backend. You must create this S3 bucket in your AWS account before running Terraform.
+EKS Cluster: Provisioned using terraform-aws-modules/eks/aws.
 
-Bucket Name: terraform-state-bucket-lab-deployment
-Region: eu-west-2
+Managed Node Group: Autoscaling EC2 worker nodes (t3.small).
 
-Update the backend "s3" block in main.tf if you use a different bucket name or region.
+Terraform Remote State: Stored in an S3 bucket with optional locking support via use_lockfile.
 
-3. Customize Input Variables
-The primary variable to configure is the cluster_name. Create a terraform.tfvars file in the root of the directory:
+## Prerequisites
+Terraform v1.10.0 or newer
 
-# terraform.tfvars
+AWS CLI version 2
+
+AWS credentials configured via aws configure
+
+An S3 bucket already created for the remote backend
+
+Kubectl version 
+Offically supported with the Eks Cluster	v1.30, v1.31, v1.32
+
+<pre>
+## 💰 Estimated Costs
+
+| Resource               | Count | Cost (USD/hr) | Total    |
+|------------------------|-------|---------------|----------|
+| EKS Control Plane      | 1     | $0.10         | $0.10    |
+| EC2 t3.small Instances | 2     | $0.0208       | $0.0416  |
+| EBS (2x 8GB)           | 2     | $0.001        | $0.002   |
+| S3 (State Backend)     | -     | Free Tier     | $0.00    |
+| **Estimated Total/hr** |       |               | **$0.1436** |
+
+⚠️ You are responsible for all AWS charges incurred by this infrastructure.
+</pre>
+--
+
+## ⚙️ Configuration & Deployment
+1️⃣ Clone the Repository
+
+git clone https://github.com/your-org/eks-platform-lab.git
+cd eks-platform-lab
+
+2️⃣ Configure the S3 Backend
+Edit the main.tf file with your S3 backend settings: This requires you creating an S3 bucket 
+
+<pre>
+hcl
+terraform {
+  backend "s3" {
+    bucket = "terraform-state-bucket-lab-deployment"
+    key    = "envs/dev/terraform.tfstate"
+    region = "eu-west-2"
+    encrypt = true
+    use_lockfile = true
+  }
+</pre>
+Make sure the bucket exists before running terraform init.
+
+3️⃣ Customize Variables
+Edit the terraform.tfvars file And give your cluster a name
+
+
 cluster_name = "my-eks-cluster"
+Other variables (e.g., aws_region, aws_profile) can be overridden here or in variables.tf.
 
-Other variables like aws_region and aws_profile can be found in variables.tf and can be overridden in your terraform.tfvars file if needed.
-
-4. Initialize Terraform
-This command initializes the working directory, downloads the required providers, and configures the backend.
+4️⃣ Initialize Terraform
 
 terraform init
 
-5. Plan the Deployment
-This command creates an execution plan, showing you what resources Terraform will create, modify, or destroy.
+5️⃣ Preview Changes
 
-terraform plan
+terraform plan -var-file=terraform.tfvars
 
-6. Apply the Configuration
-This command applies the changes required to reach the desired state of the configuration.
+6️⃣ Apply Configuration
 
-terraform apply
+terraform apply -var-file=terraform.tfvars
 
-Enter yes when prompted to confirm the deployment. The process will take several minutes to complete.
+Confirm with yes when prompted.
 
-Connecting to the Cluster
-Once the terraform apply command is complete, you will need to configure kubectl to connect to your new EKS cluster.
+🔗 Connect to Your EKS Cluster
+Update Kubeconfig
 
-Update Kubeconfig: Use the AWS CLI to update your local kubeconfig file.
+aws eks update-kubeconfig \
+  --region $(terraform output -raw aws_region) \
+  --name   $(terraform output -raw cluster_name)
 
-aws eks update-kubeconfig --region $(terraform output -raw aws_region) --name $(terraform output -raw cluster_name)
+Optional: Enable Public Endpoint to connect to your cluster using kubectl
 
-Verify Connection: Test your connection to the cluster.
+aws eks update-cluster-config \
+  --name <CLUSTER_NAME> \
+  --region <REGION> \
+  --resources-vpc-config endpointPublicAccess=true
+
+## **Verify Connection**
 
 kubectl get nodes
 
-You should see the nodes from your managed node group with a Ready status.
 
-Project Outputs
-This project provides several useful outputs, defined in outputs.tf:
+📤 Terraform Outputs
+Use terraform output to view:
 
-cluster_name: The name of the EKS cluster.
+cluster_name
 
-cluster_endpoint: The endpoint for your EKS cluster's API server.
+cluster_endpoint
 
-cluster_arn: The Amazon Resource Name (ARN) of the cluster.
+cluster_arn
 
-vpc_id: The ID of the VPC created for the cluster.
+vpc_id
 
-private_subnets: A list of the private subnet IDs.
+private_subnets
 
-You can view these outputs at any time by running:
+🚀 Next Steps: GitOps Ready
+Once the cluster is live, deploy Argo CD or Flux to enable GitOps workflows.
 
-terraform output
+My GitOps Repo
++ [My GitOps Repo](https://github.com/Hanz-ala1/gitops)
 
-Next Steps: GitOps Integration
-This Terraform project intentionally focuses only on provisioning the core infrastructure. The next logical step is to set up a GitOps workflow to manage applications on the cluster.
+### 🛡️ Production Readiness
+This template is **optimized for speed and simplicity**, but enterprises should:  
+- Replace admin IAM roles with **IRSA** ([guide](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html))  
+- Enforce **Pod Security Admission** ([example](https://kubernetes.io/docs/concepts/security/pod-security-standards/))  
+- Add **KMS encryption** for Terraform state (`kms_key_id` in S3 backend)  
 
-This EKS cluster is now ready for a GitOps controller like Argo CD or Flux to be installed. The GitOps controller would then monitor a separate Git repository (your application/manifests repository) and automatically deploy and manage applications on this cluster.
 
-Destroying the Infrastructure
-To avoid ongoing charges, you can destroy all the resources created by this project when they are no longer needed.
+🧨 Tear Down (Cleanup)
+To destroy all resources and avoid ongoing charges:
 
-Warning: This is a destructive operation and cannot be undone.
 
-terraform destroy
+terraform destroy -var-file=terraform.tfvars
+⚠️ This is irreversible. Proceed with caution.
 
-Enter yes when prompted to confirm.
+📚 Resources
+Terraform AWS Provider
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+
+terraform-aws-eks module
+https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
+
+AWS EKS Documentation
+https://docs.aws.amazon.com/eks/
+
+
+
+🛡️ Disclaimer
+This project is for educational and experimental purposes. You are solely responsible for any AWS usage charges incurred.
+
