@@ -19,7 +19,7 @@ This project demonstrates **Infrastructure as Code (IaC)** to build a scalable a
 
 ## 🏗️ Architecture
 
-```text
+<pre>
    ┌─────────────────────────────┐
    │         AWS Region          │
    │ ┌─────────────────────────┐ │
@@ -42,19 +42,23 @@ This project demonstrates **Infrastructure as Code (IaC)** to build a scalable a
    │ │     │ • Multi-AZ     │  │ │
    │ │     └────────────────┘  │ │
    │ └─────────────────────────┘ │
-   └─────────────────────────────┘ ```
+   └─────────────────────────────┘ 
+
+</pre>
 
 ---
+
+
 ## 📦 Core Components
 VPC: Custom /16 CIDR, public and private subnets across 3 AZs.
 
 EKS Cluster: Provisioned using terraform-aws-modules/eks/aws.
 
-Managed Node Group: Autoscaling EC2 worker nodes (t3.small by default).
+Managed Node Group: Autoscaling EC2 worker nodes (t3.small).
 
 Terraform Remote State: Stored in an S3 bucket with optional locking support via use_lockfile.
 
-✅ Prerequisites
+## Prerequisites
 Terraform v1.10.0 or newer
 
 AWS CLI version 2
@@ -66,17 +70,19 @@ An S3 bucket already created for the remote backend
 Kubectl version 
 Offically supported with the Eks Cluster	v1.30, v1.31, v1.32
 
+<pre>
+## 💰 Estimated Costs
 
-💰 Estimated Costs
-Resource	Count	Cost          (USD/hr)	Total
-EKS Control Plane	1	         $0.10	   $0.10
-EC2 t3.small Instances	2	   $0.0208	$0.0416
-EBS (2x 8GB)	2	            $0.001	$0.002
-S3 (State Backend) -	Free Tier	      $0.00
-Estimated Total/hr			            $0.1436
+| Resource               | Count | Cost (USD/hr) | Total    |
+|------------------------|-------|---------------|----------|
+| EKS Control Plane      | 1     | $0.10         | $0.10    |
+| EC2 t3.small Instances | 2     | $0.0208       | $0.0416  |
+| EBS (2x 8GB)           | 2     | $0.001        | $0.002   |
+| S3 (State Backend)     | -     | Free Tier     | $0.00    |
+| **Estimated Total/hr** |       |               | **$0.1436** |
 
 ⚠️ You are responsible for all AWS charges incurred by this infrastructure.
-
+</pre>
 --
 
 ## ⚙️ Configuration & Deployment
@@ -88,16 +94,17 @@ cd eks-platform-lab
 2️⃣ Configure the S3 Backend
 Edit the main.tf file with your S3 backend settings: This requires you creating an S3 bucket 
 
+<pre>
 hcl
-
 terraform {
   backend "s3" {
-    bucket         = "terraform-state-bucket-lab-deployment"
-    key            = "eks/terraform.tfstate"
-    region         = "eu-west-2"
-    use_lockfile   = true
+    bucket = "terraform-state-bucket-lab-deployment"
+    key    = "envs/dev/terraform.tfstate"
+    region = "eu-west-2"
+    encrypt = true
+    use_lockfile = true
   }
-}
+</pre>
 Make sure the bucket exists before running terraform init.
 
 3️⃣ Customize Variables
@@ -114,9 +121,11 @@ terraform init
 5️⃣ Preview Changes
 
 terraform plan -var-file=terraform.tfvars
+
 6️⃣ Apply Configuration
 
 terraform apply -var-file=terraform.tfvars
+
 Confirm with yes when prompted.
 
 🔗 Connect to Your EKS Cluster
@@ -126,14 +135,14 @@ aws eks update-kubeconfig \
   --region $(terraform output -raw aws_region) \
   --name   $(terraform output -raw cluster_name)
 
-Optional: Enable Public Endpoint to connect to your cluster
+Optional: Enable Public Endpoint to connect to your cluster using kubectl
 
 aws eks update-cluster-config \
   --name <CLUSTER_NAME> \
   --region <REGION> \
   --resources-vpc-config endpointPublicAccess=true
 
-**Verify Connection**
+## **Verify Connection**
 
 kubectl get nodes
 
