@@ -1,4 +1,4 @@
-# 🚀 eks-platform-lab
+#  eks-platform-lab
 
 **EKS Terraform Foundation: Rapid AWS Kubernetes Clusters**
 
@@ -89,6 +89,7 @@ Offically supported with the Eks Cluster	v1.30, v1.31, v1.32
 1️⃣ Clone the Repository
 
 git clone https://github.com/your-org/eks-platform-lab.git
+
 cd eks-platform-lab
 
 2️⃣ Configure the S3 Backend
@@ -139,7 +140,7 @@ Optional: Enable Public Endpoint to connect to your cluster using kubectl
 
 aws eks update-cluster-config \
   --name <CLUSTER_NAME> \
-  --region <REGION> \
+  --region <Region_NAME> \
   --resources-vpc-config endpointPublicAccess=true
 
 ## **Verify Connection**
@@ -147,7 +148,7 @@ aws eks update-cluster-config \
 kubectl get nodes
 
 
-📤 Terraform Outputs
+### 📤 Terraform Outputs
 Use terraform output to view:
 
 cluster_name
@@ -160,15 +161,16 @@ vpc_id
 
 private_subnets
 
-🚀 Next Steps: GitOps Ready
+## 🚀 Next Steps: GitOps Ready
 Once the cluster is live, deploy Argo CD or Flux to enable GitOps workflows.
 
 My GitOps Repo
 + [My GitOps Repo](https://github.com/Hanz-ala1/gitops)
 
-### 🛡️ Production Readiness
+## 🛡️ Production Readiness
 This template is **optimized for speed and simplicity**, but enterprises should:  
-- Replace admin IAM roles with **IRSA** ([guide](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html))  
+
+- Replace admin IAM roles with **IRSA** ([guide](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)) 
 - Enforce **Pod Security Admission** ([example](https://kubernetes.io/docs/concepts/security/pod-security-standards/))  
 - Add **KMS encryption** for Terraform state (`kms_key_id` in S3 backend)  
 
@@ -180,7 +182,8 @@ To destroy all resources and avoid ongoing charges:
 terraform destroy -var-file=terraform.tfvars
 ⚠️ This is irreversible. Proceed with caution.
 
-📚 Resources
+## 📚 Resources
+
 Terraform AWS Provider
 https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 
@@ -189,8 +192,6 @@ https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
 
 AWS EKS Documentation
 https://docs.aws.amazon.com/eks/
-
-
 
 🛡️ Disclaimer
 This project is for educational and experimental purposes. You are solely responsible for any AWS usage charges incurred.
