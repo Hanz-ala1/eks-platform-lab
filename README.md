@@ -15,6 +15,27 @@ This project demonstrates **Infrastructure as Code (IaC)** to build a scalable a
 - Remote S3 state backend (with locking support)
 - GitOps-ready foundation
 
+
+🔁 Flow Example
+<pre>
+terraform.tfvars 
+      ↓
+root variables.tf 
+      ↓
+root main.tf  (module block with var.* or hardcoded)
+      ↓
+child module variables.tf (receives)
+      ↓
+child module main.tf (uses)
+      ↓
+child module outputs.tf (exposes optional values)
+      ↓
+root outputs.tf (prints if needed)
+
+</pre>
+
+
+
 ---
 
 ## 🏗️ Architecture
@@ -93,7 +114,7 @@ git clone https://github.com/Hanz-ala1/eks-platform-lab.git
 cd eks-platform-lab
 
 2️⃣ Configure the S3 Backend
-Edit the main.tf file with your S3 backend settings: This requires you creating an S3 bucket 
+Edit the backend.tf file with your S3 backend settings: This requires you creating an S3 bucket 
 
 <pre>
 hcl
@@ -175,7 +196,7 @@ This template is **optimized for speed and simplicity**, but enterprises should:
 - Add **KMS encryption** for Terraform state (`kms_key_id` in S3 backend)  
 
 
-🧨 Tear Down (Cleanup)
+## 🧨 Tear Down (Cleanup)
 To destroy all resources and avoid ongoing charges:
 
 
